@@ -3,6 +3,7 @@ session_start();
 
 //$bdd = new PDO("mysql:host=localhost;dbname=gif;charset=utf8", 'root', 'root');
 
+
 ?>
 
 <!DOCTYPE html>
