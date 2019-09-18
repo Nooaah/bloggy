@@ -15,7 +15,7 @@ if (isset($_POST['submitArticle']))
         $titre = htmlspecialchars($_POST['titre']);
         $image = htmlspecialchars($_POST['image']);
         $contenu = nl2br($_POST['contenu']);
-        $categorie = nl2br($_POST['categorie']);
+        $categorie = htmlspecialchars($_POST['categorie']);
 
         $ins = $bdd->prepare('INSERT INTO articles(titre, contenu, date, image, id_membre, categorie) VALUES(?,?,?,?,?,?)');
         $ins->execute(array($titre, $contenu, time(), $image, $_SESSION['id'], $categorie));
@@ -184,6 +184,10 @@ if (isset($_POST['login'])) {
                 <a href="ajouter.php" class="nav-link" >
                 Ajouter un article</a>
             </li>
+            <li class="nav-item">
+                <a href="profil.php?id=<?= $_SESSION['id'] ?>" class="nav-link" >
+                Mon profil</a>
+            </li>
             <?php
         }
 
@@ -194,7 +198,6 @@ if (isset($_POST['login'])) {
 
     <form class="form-inline">
       <div class="md-form my-0">
-        <input class="form-control mr-sm-2" type="text" placeholder="Rechercher" aria-label="Rechercher">
         <?php
         if (isset($_SESSION['id']))
         {
@@ -276,6 +279,7 @@ if (isset($_POST['login'])) {
         </button>
       </div>
       <div class="modal-body mx-3">
+        <i>Compte de Noah : noah.chtl@gmail.com & 123</i>
         <div class="md-form mb-5">
           <i class="fas fa-envelope prefix grey-text"></i>
           <input id="mail" name="mail" type="email" id="defaultForm-email" class="form-control validate">

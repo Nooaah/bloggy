@@ -160,6 +160,10 @@ if (isset($_POST['login'])) {
                 <a href="ajouter.php" class="nav-link" >
                 Ajouter un article</a>
             </li>
+            <li class="nav-item">
+                <a href="profil.php?id=<?= $_SESSION['id'] ?>" class="nav-link" >
+                Mon profil</a>
+            </li>
             <?php
         }
 
@@ -252,6 +256,7 @@ if (isset($_POST['login'])) {
         </button>
       </div>
       <div class="modal-body mx-3">
+        <i>Compte de Noah : noah.chtl@gmail.com & 123</i>
         <div class="md-form mb-5">
           <i class="fas fa-envelope prefix grey-text"></i>
           <input id="mail" name="mail" type="email" id="defaultForm-email" class="form-control validate">
@@ -329,7 +334,7 @@ if (isset($_POST['login'])) {
 
             <div class="col-md-8">
                     <p style="font-size:19px;" class="mt-2">
-                        <div class="date" style="font-size:13px;"><b><b><?= $a['categorie'] ?> / </b></b><?= 'Il y a ' . date('i', time() - $a['date']) . ' minutes ' . date('s', time() - $a['date']) . ' secondes';  ?></div>
+                        <div class="date" style="font-size:13px;"><b><b><?= $a['categorie'] ?> / </b></b><?= 'Il y a ' . date('H', time() - $a['date']) . ' heures ' . date('i', time() - $a['date']) . ' minutes ' . date('s', time() - $a['date']) . ' secondes';  ?></div>
                         <h2 class="mb-3"><b><b><a id="linkArticle" href="article.php?id=<?= $a['id'] ?>"><?= $a['titre'] ?></a></b></b></h2>
                         <?php
                         $text = $a['contenu'];

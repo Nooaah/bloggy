@@ -3,6 +3,14 @@ session_start();
 
 $bdd = new PDO("mysql:host=localhost;dbname=bloggy;charset=utf8", 'root', 'root');
 
+
+if (isset($_POST['titreCategorie']))
+{
+    $categorie = htmlspecialchars($_POST['titreCategorie']);
+    $ins = $bdd->prepare('INSERT INTO categorie (titre) VALUES(?)');
+    $ins->execute(array($categorie));
+}
+
 if (empty($_SESSION['id']))
 {
     header('location:index.php');
@@ -14,6 +22,22 @@ if (isset($_GET['id']))
 else
 {
     header('location:index.php');
+}
+
+if (isset($_GET['del']))
+{
+    $idel = intval($_GET['del']);
+    $del = $bdd->prepare('DELETE FROM articles WHERE id = ?');
+    $del->execute(array($idel));
+    header('location:profil.php?id='.$_SESSION['id']);
+}
+
+if (isset($_GET['delcat']))
+{
+    $idel = intval($_GET['delcat']);
+    $del = $bdd->prepare('DELETE FROM categorie WHERE id = ?');
+    $del->execute(array($idel));
+    header('location:profil.php?id='.$_SESSION['id']);
 }
 
 
@@ -127,6 +151,10 @@ else
                 <a href="ajouter.php" class="nav-link" >
                 Ajouter un article</a>
             </li>
+            <li class="nav-item">
+                <a href="profil.php?id=<?= $_SESSION['id'] ?>" class="nav-link" >
+                Mon profil</a>
+            </li>
             <?php
         }
 
@@ -137,7 +165,6 @@ else
 
     <form class="form-inline">
       <div class="md-form my-0">
-        <input class="form-control mr-sm-2" type="text" placeholder="Rechercher" aria-label="Rechercher">
         <?php
         if (isset($_SESSION['id']))
         {
@@ -258,10 +285,92 @@ $userinfo = $req->fetch();
 
             <div class="row">
                 <div class="col-md-3">
-                    <img src="<?= $userinfo['image'] ?>" width="100%" style="border-radius:100%;" class="mt-3" alt="">
+                    <img src="<?= $userinfo['image'] ?>" width="100%" style="border-radius:100%;" class="mt-5" alt="">
                 </div>
                 <div class="col-md-9">
-                    
+                    <table class="table table-striped">
+                    <thead>
+                        <tr>
+                        <th scope="col" width="10%">Date de création</th>
+                        <th scope="col">Titre</th>
+                        <th scope="col" width="10%">Catégorie</th>
+                        <th scope="col" width="10%">Vues</th>
+                        <th scope="col" width="10%">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    $article = $bdd->prepare('SELECT * FROM articles WHERE id_membre = ? ORDER BY id');
+                    $article->execute(array($_SESSION['id']));
+                    while ($a = $article->fetch()) {
+                    ?>
+                            <tr>
+                                <th><?= date('d/m/Y', $a['date']) ?><br><?= date('H:i', $a['date']) ?></th>
+                                <th><a href="article.php?id=<?= $a['id'] ?>"><?= $a['titre'] ?></a></th>
+                                <th><?= $a['categorie'] ?></th>
+                                <th><?= $a['views'] ?></th>
+                                <th>
+                                    <a href="profil.php?id=<?= $_SESSION['id'] ?>&del=<?= $a['id'] ?>"><i style="color:red;" class="fas fa-trash-alt"></i></a>
+                                    <a><i style="color:green;" class="fas fa-pencil-alt ml-3"></i></a>
+                                </th>
+                            </tr>
+                            <?php
+                    }
+                    ?>
+                        </tbody>
+                    </table>
+                    <br>
+                    <hr>
+                    <h6>Catégories</h6>
+                    <hr>
+
+
+
+
+
+
+                    <div class="row">
+                        <div class="col-md-5">
+                        
+
+                            <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col" width="10%">Titre</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            $cate = $bdd->prepare('SELECT * FROM categorie WHERE id != ? ORDER BY id');
+                            $cate->execute(array(0));
+                            while ($c = $cate->fetch()) {
+                            ?>
+                                    <tr>
+                                        <th><?= $c['titre'] ?> <a href="profil.php?delcat=<?= $c['id'] ?>"><i style="color:red;" class="ml-5 fas fa-trash-alt"></a></th>
+                                    </tr>
+                                    <?php
+                            }
+                            ?>
+                                </tbody>
+                            </table>
+
+                        </div>
+                            <div class="col-md-7">
+                                <!-- Material input -->
+                        <form action="" method="POST">
+                                <div class="md-form">
+                                <input type="text" id="titreCategorie" name="titreCategorie" maxlength="100" class="form-control" style="font-size:20px;">
+                                <label style="font-size:20px;" for="titreCategorie">Ajouter une catégorie</label>
+                                </div>
+                                <input type="submit" class="btn btn-success" id="addCategorie" name="addCategorie" value="Ajouter cette catégorie">
+                        </form>
+                            </div>  
+                    </div>
+
+
+
+
+
                 </div>
             </div>
 

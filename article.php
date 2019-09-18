@@ -183,6 +183,10 @@ $up->execute(array($getid));
                     <a href="ajouter.php" class="nav-link" >
                     Ajouter un article</a>
                 </li>
+                <li class="nav-item">
+                    <a href="profil.php?id=<?= $_SESSION['id'] ?>" class="nav-link" >
+                    Mon profil</a>
+                </li>
                 <?php
             }
 
@@ -195,7 +199,6 @@ $up->execute(array($getid));
 
     <form class="form-inline">
       <div class="md-form my-0">
-        <input class="form-control mr-sm-2" type="text" placeholder="Rechercher" aria-label="Rechercher">
         <?php
         if (isset($_SESSION['id']))
         {
@@ -282,6 +285,7 @@ aria-hidden="true">
     </button>
   </div>
   <div class="modal-body mx-3">
+    <i>Compte de Noah : noah.chtl@gmail.com & 123</i>
     <div class="md-form mb-5">
       <i class="fas fa-envelope prefix grey-text"></i>
       <input id="mail" name="mail" type="email" id="defaultForm-email" class="form-control validate">
@@ -342,7 +346,7 @@ aria-hidden="true">
 
                     <div class="row">
                         <div class="col-md-1 mb-4 mt-2">
-                            <img src="<?= $userinfo['image'] ?>" width="100%" style="border-radius:100%;" alt="">
+                            <img src="<?= $userinfo['image'] ?>" width="50px" style="border-radius:100%;" alt="">
                         </div>
                         <div class="col-md-11 mb-4" style="color:#BDBDBD;font-size:14px;">
                             <b><b><?= 'Ajouté le ' . date('d/m/Y', $a['date']) . ' à '.date('H:i', time() - $a['date']).'';  ?></b></b>
