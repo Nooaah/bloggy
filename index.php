@@ -113,7 +113,7 @@ if (isset($_POST['login'])) {
     <!-- Links -->
     <ul class="navbar-nav mr-auto">
     <li class="nav-item">
-        <a class="nav-link" href="index.php">Nouveautés</a>
+        <a class="nav-link" href="index.php">Accueil</a>
       </li>
 
       <!-- Dropdown -->
@@ -185,7 +185,7 @@ if (isset($_POST['login'])) {
         if (isset($_SESSION['id']))
         {
             ?>
-            <span class="white-text">Connecté en tant que <b><a id="profilLink" href="profil.php?id=<?= $_SESSION['id'] ?>"><?= $_SESSION['pseudo'] ?></a></b></span>
+            <span class="white-text">Connecté en tant que <b><a id="profilLink" href="profil.php?id=<?= $_SESSION['id'] ?>"><?= ucfirst($_SESSION['pseudo']) ?></a></b></span>
             <?php
         }
         ?>
@@ -346,7 +346,7 @@ if (isset($_POST['login'])) {
 
             <div class="col-md-8">
                     <p style="font-size:19px;" class="mt-2">
-                        <div class="date" style="font-size:13px;"><b><b><?= $a['categorie'] ?> / </b></b><?= 'Il y a ' . date('H', time() - $a['date']) . ' heures ' . date('i', time() - $a['date']) . ' minutes ' . date('s', time() - $a['date']) . ' secondes';  ?></div>
+                        <div class="date" style="font-size:13px;"><b><b><?= $a['categorie'] ?> / </b></b><?= 'Il y a ' . date('i', time() - $a['date']) . ' minutes ' . date('s', time() - $a['date']) . ' secondes';  ?></div>
                         <h2 class="mb-3"><b><b><a id="linkArticle" href="article.php?id=<?= $a['id'] ?>"><?= $a['titre'] ?></a></b></b></h2>
                         <?php
                         $text = $a['contenu'];

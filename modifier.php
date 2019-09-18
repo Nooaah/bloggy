@@ -3,42 +3,97 @@ session_start();
 
 $bdd = new PDO("mysql:host=localhost;dbname=bloggy;charset=utf8", 'root', 'root');
 
-
-if (isset($_POST['titreCategorie']))
-{
-    $categorie = htmlspecialchars($_POST['titreCategorie']);
-    $ins = $bdd->prepare('INSERT INTO categorie (titre) VALUES(?)');
-    $ins->execute(array($categorie));
-}
-
 if (empty($_SESSION['id']))
 {
     header('location:index.php');
 }
+
 if (isset($_GET['id']))
 {
     $getid = intval($_GET['id']);
+    $req = $bdd->prepare('SELECT * FROM articles WHERE id = ?');
+    $req->execute(array($getid));
+    if ($req->rowcount() == 1)
+    {
+        $a = $req->fetch();
+    }
+    else
+    {
+        header('location:index.php');
+    }
 }
 else
 {
     header('location:index.php');
 }
 
-if (isset($_GET['del']))
+if (isset($_POST['submitArticle']))
 {
-    $idel = intval($_GET['del']);
-    $del = $bdd->prepare('DELETE FROM articles WHERE id = ?');
-    $del->execute(array($idel));
-    header('location:profil.php?id='.$_SESSION['id']);
+    if (!empty($_POST['titre']) && !empty($_POST['image']) && !empty($_POST['contenu']) && !empty($_POST['categorie']))
+    {
+        $titre = htmlspecialchars($_POST['titre']);
+        $image = htmlspecialchars($_POST['image']);
+        $contenu = nl2br($_POST['contenu']);
+        $categorie = htmlspecialchars($_POST['categorie']);
+
+        $ins = $bdd->prepare('INSERT INTO articles(titre, contenu, date, image, id_membre, categorie) VALUES(?,?,?,?,?,?)');
+        $ins->execute(array($titre, $contenu, time(), $image, $_SESSION['id'], $categorie));
+
+        $upp = $bdd->prepare('UPDATE articles SET titre = ? AND contenu = ? AND image = ? AND categorie = ? WHERE id = ?');
+        $upp->execute(array($titre, $contenu, $image, $categorie, $getid));
+
+        header('location:index.php');
+
+    }
 }
 
-if (isset($_GET['delcat']))
+
+
+if (isset($_POST['pseudoRegister']) && isset($_POST['emailRegister']) && isset($_POST['passwordRegister']))
 {
-    $idel = intval($_GET['delcat']);
-    $del = $bdd->prepare('DELETE FROM categorie WHERE id = ?');
-    $del->execute(array($idel));
-    header('location:profil.php?id='.$_SESSION['id']);
+    $pseudo = htmlspecialchars($_POST['pseudoRegister']);
+    $email = htmlspecialchars($_POST['emailRegister']);
+    $mdp = sha1(htmlspecialchars($_POST['passwordRegister']));
+
+    $ins = $bdd->prepare('INSERT INTO membres(pseudo, mail, mdp, image) VALUES(?,?,?,?)');
+    $ins->execute(array($pseudo, $email, $mdp, 'http://placehold.it/100x100'));
+
+    sleep(1);
+
+    $user = $bdd->prepare('SELECT * FROM membres WHERE mail = ? AND mdp = ?');
+    $user->execute(array($email, $mdp));
+    $user = $user->fetch();
+
+
+    $_SESSION['id'] = $user['id'];
+    $_SESSION['pseudo'] = $user['pseudo'];
+    $_SESSION['mdp'] = $user['mdp'];
+    $_SESSION['mail'] = $user['mail'];
+
 }
+
+
+
+
+if (isset($_POST['login'])) {
+    if (!empty($_POST['mail']) && !empty($_POST['password'])) {
+        $mail = htmlspecialchars($_POST['mail']);
+        $password = sha1(htmlspecialchars($_POST['password']));
+        $req = $bdd->prepare('SELECT * FROM membres WHERE mail = ? AND mdp = ?');
+        $req->execute(array($mail, $password));
+        $nbMembres = $req->rowcount();
+
+        if ($nbMembres >= 1) {
+            $req = $req->fetch();
+            $_SESSION['id'] = $req['id'];
+            $_SESSION['pseudo'] = $req['pseudo'];
+            $_SESSION['mdp'] = $req['mdp'];
+            $_SESSION['mail'] = $req['mail'];
+        }
+    }
+}
+
+
 
 
 ?>
@@ -246,6 +301,7 @@ if (isset($_GET['delcat']))
         </button>
       </div>
       <div class="modal-body mx-3">
+        <i>Compte de Noah : noah.chtl@gmail.com & 123</i>
         <div class="md-form mb-5">
           <i class="fas fa-envelope prefix grey-text"></i>
           <input id="mail" name="mail" type="email" id="defaultForm-email" class="form-control validate">
@@ -269,122 +325,88 @@ if (isset($_GET['delcat']))
 </form>
 
 
-<?php
-$req = $bdd->prepare('SELECT * FROM membres WHERE id = ?');
-$req->execute(array($getid));
-$userinfo = $req->fetch();
-?>
-
-
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1 class="mt-5">Bienvenue sur votre profil, <?= $_SESSION['pseudo'] ?></h1>
-
-            <hr>
-
-            <div class="row">
-                <div class="col-md-3">
-                    <img src="<?= $userinfo['image'] ?>" width="100%" style="border-radius:100%;" class="mt-5" alt="">
-                    <h4 class="text-center mt-4"><?= $_SESSION['pseudo'] ?></h4 class="text-center">
-                    <p class="mt-2 text-center">
-                        <a href="mailto:<?= $_SESSION['mail'] ?>"><?= $_SESSION['mail'] ?></a>
-                    </p>
-                </div>
-                <div class="col-md-9">
-                    <table class="table table-striped">
-                    <thead>
-                        <tr>
-                        <th scope="col" width="10%">Date de création</th>
-                        <th scope="col">Titre</th>
-                        <th scope="col" width="10%">Catégorie</th>
-                        <th scope="col" width="10%">Vues</th>
-                        <th scope="col" width="10%">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php
-                    $article = $bdd->prepare('SELECT * FROM articles WHERE id_membre = ? ORDER BY id');
-                    $article->execute(array($_SESSION['id']));
-                    while ($a = $article->fetch()) {
-                    ?>
-                            <tr>
-                                <th><?= date('d/m/Y', $a['date']) ?><br><?= date('H:i', $a['date']) ?></th>
-                                <th><a href="article.php?id=<?= $a['id'] ?>"><?= $a['titre'] ?></a></th>
-                                <th><?= $a['categorie'] ?></th>
-                                <th><?= $a['views'] ?></th>
-                                <th>
-                                    <a href="profil.php?id=<?= $_SESSION['id'] ?>&del=<?= $a['id'] ?>"><i style="color:red;" class="fas fa-trash-alt"></i></a>
-                                    <a href="modifier.php?id=<?= $a['id'] ?>"><i style="color:green;" class="fas fa-pencil-alt ml-3"></i></a>
-                                </th>
-                            </tr>
-                            <?php
-                    }
-                    ?>
-                        </tbody>
-                    </table>
-                    <br>
-                    <hr>
-                    <h5>Catégories</h5>
-                    <hr>
 
 
 
 
+<form action="" method="POST">
 
+        <div class="container">
 
-                    <div class="row">
-                        <div class="col-md-5">
-                        
+            <h1 class="mt-5">Bonjour <?= $_SESSION['pseudo'] ?>, rédigez votre article</h1>
 
-                            <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Titre</th>
-                                    <th scope="col" class="text-center" width="10%">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <?php
-                            $cate = $bdd->prepare('SELECT * FROM categorie WHERE id != ? ORDER BY id');
-                            $cate->execute(array(0));
-                            while ($c = $cate->fetch()) {
-                            ?>
-                                    <tr>
-                                        <th><?= $c['titre'] ?></th>
-                                        <th><a href="profil.php?delcat=<?= $c['id'] ?>"><i style="color:red;" class="ml-5 fas fa-trash-alt"></a></th>
-                                    </tr>
-                                    <?php
-                            }
-                            ?>
-                                </tbody>
-                            </table>
+            <div class="col-md-12">
 
+                <div class="row">
+                    <div class="col-md-9">
+                        <!-- Material input -->
+                        <div class="md-form">
+                        <input type="text" id="titre" name="titre" maxlength="100" class="form-control" style="font-size:20px;" value="<?= $a['titre'] ?>">
+                        <label style="font-size:20px;" for="titre">Titre de votre article</label>
                         </div>
-                            <div class="col-md-7">
-                                <!-- Material input -->
-                        <form action="" method="POST">
-                                <div class="md-form">
-                                <input type="text" id="titreCategorie" name="titreCategorie" maxlength="100" class="form-control" style="font-size:20px;">
-                                <label style="font-size:20px;" for="titreCategorie">Ajouter une catégorie</label>
-                                </div>
-                                <input type="submit" class="btn btn-success" id="addCategorie" name="addCategorie" value="Ajouter cette catégorie">
-                        </form>
-                            </div>  
                     </div>
-
-
-
-
-
+                    <div class="col-md-3 pt-4">
+                        <select id="categorie" name="categorie" class="browser-default custom-select">
+                        <?php
+                            $cat = $bdd->prepare('SELECT * FROM categorie WHERE id != ?');
+                            $cat->execute(array(0));
+                            while ($c = $cat->fetch()) {
+                        ?>
+                            <option value="<?= $c['titre'] ?>"><?= $c['titre'] ?></option>
+                        
+                        <?php
+                            }
+                        ?>
+                        </select>
+                    </div>
                 </div>
+
+
+                <div class="row">
+                    <div class="col-md-9">
+                        <!-- Material input -->
+                        <div class="md-form">
+                        <input style="font-size:18px;" type="text" id="image" name="image" class="form-control" value="<?= $a['image'] ?>">
+                        <label style="font-size:18px;" for="image">URL de votre image</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <img id="apercu" src="<?= $a['image'] ?>" width="100%" alt="">
+                    </div>
+                </div>
+
+
+
+
+                <!--Material textarea-->
+                <div class="md-form">
+                <textarea style="font-size:18px;" id="contenu" name="contenu" class="md-textarea form-control" rows="10"><?php
+                    $text = str_replace("<br />", "", $a['contenu']);
+                    echo $text;
+                    ?></textarea>
+                <label style="font-size:18px;" for="contenu">Contenu de votre article</label>
+                </div>
+
+                <input type="submit" id="submitArticle" name="submitArticle" class="btn btn-success" value="Modifier l'article <?= $a['titre'] ?>">
+
             </div>
-
         </div>
-    </div>
-</div>
 
 
+
+
+</form>
+
+
+<script>
+    document.getElementById('titre').addEventListener('keyup', function() {
+        document.getElementById('submitArticle').value = 'Modifier l\'article ' + this.value;
+    });
+
+    document.getElementById('image').addEventListener('keyup', function() {
+        document.getElementById('apercu').src = this.value;
+    });
+</script>
 
 
 

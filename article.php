@@ -133,7 +133,7 @@ $up->execute(array($getid));
     <!-- Links -->
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" href="index.php">Nouveautés</a>
+        <a class="nav-link" href="index.php">Accueil</a>
       </li>
 
       <!-- Dropdown -->
@@ -203,7 +203,7 @@ $up->execute(array($getid));
         if (isset($_SESSION['id']))
         {
             ?>
-            <span class="white-text">Connecté en tant que <b><a id="profilLink" href="profil.php?id=<?= $_SESSION['id'] ?>"><?= $_SESSION['pseudo'] ?></a></b></span>
+            <span class="white-text">Connecté en tant que <b><a id="profilLink" href="profil.php?id=<?= $_SESSION['id'] ?>"><?= ucfirst($_SESSION['pseudo']) ?></a></b></span>
             <?php
         }
         ?>
