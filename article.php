@@ -3,6 +3,23 @@ session_start();
 
 $bdd = new PDO("mysql:host=localhost;dbname=bloggy;charset=utf8", 'root', 'root');
 
+if (isset($_GET['id']))
+{
+    $getid = intval($_GET['id']);
+}
+else
+{
+    header('location:index.php');
+}
+
+$req = $bdd->prepare('SELECT * FROM articles WHERE id = ?');
+$req->execute(array($getid));
+$a = $req->fetch();
+
+$user = $bdd->prepare('SELECT * FROM membres WHERE id = ?');
+$user->execute(array($getid));
+$user = $user->fetch();
+
 ?>
 
 <!DOCTYPE html>
@@ -95,56 +112,44 @@ $bdd = new PDO("mysql:host=localhost;dbname=bloggy;charset=utf8", 'root', 'root'
 
 
 
-
-
-
-
-
-
-
-    <?php
-    $req = $bdd->prepare('SELECT * FROM articles WHERE id != ? ORDER BY id DESC');
-    $req->execute(array(0));
-    ?>
-
     <div class="container mt-5">
         <section id="articles">
             <div class="row">
                 <div class="col-md-12 text-center mb-3">
-                    <i><h5 style="background-color:#555555;color:white;width:200px;margin:auto;">Dernières actualités</h5></i>
+                    <i><h5 style="background-color:#555555;color:white;width:200px;margin:auto;">Votre article</h5></i>
                 </div>
             </div>
             <hr style="margin-top:-30px;">
-            <?php while ($a = $req->fetch()) { ?>
-            <div class="row mt-5">
-                <div class="col-md-4 mt-3 mb-4">
 
-                <!--Zoom effect-->
-                <a href="article.php?id=<?= $a['id'] ?>">
-                <div class="view overlay zoom">
-                <img src="<?= $a['image'] ?>" class="img-fluid " alt="zoom">
-                <div class="mask flex-center waves-effect waves-light">
-                    <p class="white-text"></p>
-                </div>
-                </div>
-                </a>
 
-            </div>
+            <div class="row">
+                <div class="col-md-10 mt-5">
+                    <h1 class="mb-3"><b><b><?= $a['titre'] ?></b></b></h1>
 
-            <div class="col-md-8">
-                    <p style="font-size:19px;" class="mt-2">
-                        <div class="date" style="font-size:13px;"><b><b>TECH / </b></b><?= 'Il y a ' . date('i', time() - $a['date']) . ' minutes';  ?></div>
-                        <h2 class="mb-3"><b><b><a id="linkArticle" href="article.php?id=<?= $a['id'] ?>"><?= $a['titre'] ?></a></b></b></h2>
-                        <?php
-                        $text = $a['contenu'];
-                        $text = substr($text, 0, 300);
-                        $text = $text . ' ... <br><a href="article.php?id=' . $a['id'] . '">Lire plus</a>';
-                        echo $text;
-                       ?>
+                    <div class="row">
+                        <div class="col-md-1 mb-4">
+                            <img src="<?= $user['image'] ?>" width="100%" style="border-radius:100%;" alt="">
+                        </div>
+                        <div class="col-md-11 mb-4 mt-2" style="color:#BDBDBD;font-size:14px;">
+                            <b><b><?= 'Il y a ' . date('i', time() - $a['date']) . ' minutes';  ?></b></b>
+                            <br>
+                            Par <span style="color:black;"><b><b><?= $user['pseudo'] ?></b></b></span>
+                        </div>
+                    </div>
+
+                    <img src="<?= $a['image'] ?>" width="100%" alt="">
+
+                    <p class="mt-4" style="font-size:18px;">
+                        <?= $a['contenu'] ?>
                     </p>
+
+
                 </div>
             </div>
-            <?php } ?>
+            
+
+
+            
         </section>
     </div>
 
