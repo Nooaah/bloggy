@@ -3,6 +3,12 @@ session_start();
 
 $bdd = new PDO("mysql:host=localhost;dbname=bloggy;charset=utf8", 'root', 'root');
 
+if (isset($_POST['rechercher']))
+{
+    $rechercher = htmlspecialchars($_POST['rechercher']);
+    header('location:index.php?req='.$rechercher);
+}
+
 if (isset($_POST['pseudoRegister']) && isset($_POST['emailRegister']) && isset($_POST['passwordRegister']))
 {
     $pseudo = htmlspecialchars($_POST['pseudoRegister']);
@@ -172,9 +178,9 @@ if (isset($_POST['login'])) {
     </ul>
     <!-- Links -->
 
-    <form class="form-inline">
+    <form class="form-inline" action="" method="POST">
       <div class="md-form my-0">
-        <input class="form-control mr-sm-2" type="text" placeholder="Rechercher" aria-label="Rechercher">
+        <input class="form-control mr-sm-2" type="text" id="rechercher" name="rechercher" placeholder="Rechercher" aria-label="Rechercher">
         <?php
         if (isset($_SESSION['id']))
         {
@@ -300,6 +306,12 @@ if (isset($_POST['login'])) {
         $categorie = strval($_GET['categorie']);
         $req = $bdd->prepare('SELECT * FROM articles WHERE categorie = ? ORDER BY id DESC');
         $req->execute(array($categorie));
+    }
+    else if (isset($_GET['req']))
+    {
+        $requete = htmlspecialchars($_GET['req']);
+        $req = $bdd->prepare('SELECT * FROM articles WHERE titre LIKE ? ORDER BY id DESC');
+        $req->execute(array($requete));
     }
     else
     {
