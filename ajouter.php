@@ -199,7 +199,7 @@ if (isset($_POST['login'])) {
         if (isset($_SESSION['id']))
         {
             ?>
-            <span class="white-text">Connecté en tant que <b><?= $_SESSION['pseudo'] ?></b></span>
+            <span class="white-text">Connecté en tant que <b><a id="profilLink" href="profil.php?id=<?= $_SESSION['id'] ?>"><?= $_SESSION['pseudo'] ?></a></b></span>
             <?php
         }
         ?>
@@ -315,7 +315,7 @@ if (isset($_POST['login'])) {
                     <div class="col-md-9">
                         <!-- Material input -->
                         <div class="md-form">
-                        <input type="text" id="titre" name="titre" class="form-control" style="font-size:20px;">
+                        <input type="text" id="titre" name="titre" maxlength="100" class="form-control" style="font-size:20px;">
                         <label style="font-size:20px;" for="titre">Titre de votre article</label>
                         </div>
                     </div>
@@ -336,14 +336,21 @@ if (isset($_POST['login'])) {
                 </div>
 
 
-
-
-
-                <!-- Material input -->
-                <div class="md-form">
-                <input style="font-size:18px;" type="text" id="image" name="image" class="form-control">
-                <label style="font-size:18px;" for="image">URL de votre image</label>
+                <div class="row">
+                    <div class="col-md-9">
+                        <!-- Material input -->
+                        <div class="md-form">
+                        <input style="font-size:18px;" type="text" id="image" name="image" class="form-control">
+                        <label style="font-size:18px;" for="image">URL de votre image</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <img id="apercu" src="" width="100%" alt="">
+                    </div>
                 </div>
+
+
+
 
                 <!--Material textarea-->
                 <div class="md-form">
@@ -364,7 +371,11 @@ if (isset($_POST['login'])) {
 
 <script>
     document.getElementById('titre').addEventListener('keyup', function() {
-        document.getElementById('submitArticle').textContent = 'Créer l\'article ' + this.value;
+        document.getElementById('submitArticle').value = 'Créer l\'article ' + this.value;
+    });
+
+    document.getElementById('image').addEventListener('keyup', function() {
+        document.getElementById('apercu').src = this.value;
     });
 </script>
 

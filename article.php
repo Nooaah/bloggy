@@ -200,7 +200,7 @@ $up->execute(array($getid));
         if (isset($_SESSION['id']))
         {
             ?>
-            <span class="white-text">Connecté en tant que <b><?= $_SESSION['pseudo'] ?></b></span>
+            <span class="white-text">Connecté en tant que <b><a id="profilLink" href="profil.php?id=<?= $_SESSION['id'] ?>"><?= $_SESSION['pseudo'] ?></a></b></span>
             <?php
         }
         ?>
