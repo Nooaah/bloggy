@@ -71,6 +71,10 @@ $userinfo = $bdd->prepare('SELECT * FROM membres WHERE id = ?');
 $userinfo->execute(array($a['id_membre']));
 $userinfo = $userinfo->fetch();
 
+$up = $bdd->prepare('UPDATE articles SET views = views + 1 WHERE id = ?');
+$up->execute(array($getid));
+
+
 ?>
 
 <!DOCTYPE html>
@@ -80,7 +84,7 @@ $userinfo = $userinfo->fetch();
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Gif Social Network</title>
+    <title>Bloggy</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
     <!-- Bootstrap core CSS -->
@@ -128,21 +132,25 @@ $userinfo = $userinfo->fetch();
 
     <!-- Links -->
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="index.php">Accueil
-        </a>
-      </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Nouveautés</a>
+        <a class="nav-link" href="index.php">Nouveautés</a>
       </li>
 
       <!-- Dropdown -->
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false">Dropdown</a>
-        <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="index.php">Accueil</a>
-          <a class="dropdown-item" href="index.php">Nouveautés</a>
+          aria-haspopup="true" aria-expanded="false">Catégories</a>
+          <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="index.php">Toutes les catégories</a>
+          <?php
+            $cat = $bdd->prepare('SELECT * FROM categorie WHERE id != ?');
+            $cat->execute(array(0));
+            while ($c = $cat->fetch()) {
+          ?>
+          <a class="dropdown-item" href="index.php?categorie=<?= $c['titre'] ?>"><?= $c['titre'] ?></a>
+          <?php
+            }
+            ?>
         </div>
       </li>
 
@@ -164,6 +172,20 @@ $userinfo = $userinfo->fetch();
                 </li>
                 <?php
         }
+        ?>
+
+        <?php
+
+            if (isset($_SESSION['id']))
+            {
+                ?>
+                <li class="nav-item">
+                    <a href="ajouter.php" class="nav-link" >
+                    Ajouter un article</a>
+                </li>
+                <?php
+            }
+
         ?>
 
 
@@ -312,19 +334,26 @@ aria-hidden="true">
 
 
             <div class="row">
-                <div class="col-md-10 mt-5">
-                    <h1 class="mb-3"><b><b><?= $a['titre'] ?></b></b></h1>
+                <div class="col-md-10 mt-3">
+
+                    <span style="background-color:orange;color:white;padding:5px 10px;border-radius:5px;"><b><b><?= $a['categorie'] ?></b></b></span>
+
+                    <h1 class="mb-3 mt-3"><b><b><?= $a['titre'] ?></b></b></h1>
 
                     <div class="row">
-                        <div class="col-md-1 mb-4">
+                        <div class="col-md-1 mb-4 mt-2">
                             <img src="<?= $userinfo['image'] ?>" width="100%" style="border-radius:100%;" alt="">
                         </div>
-                        <div class="col-md-11 mb-4 mt-2" style="color:#BDBDBD;font-size:14px;">
-                            <b><b><?= 'Il y a ' . date('i', time() - $a['date']) . ' minutes';  ?></b></b>
+                        <div class="col-md-11 mb-4" style="color:#BDBDBD;font-size:14px;">
+                            <b><b><?= 'Ajouté le ' . date('d/m/Y', $a['date']) . ' à '.date('H:i', time() - $a['date']).'';  ?></b></b>
                             <br>
                             Par <span style="color:black;"><b><b><?= $userinfo['pseudo'] ?></b></b></span>
+                            <br>
+                            <b>Cet article à été vu : <span style="color:black;"><?= $a['views'] ?> fois</span></b>
+                            
                         </div>
                     </div>
+                    
 
                     <img src="<?= $a['image'] ?>" width="100%" alt="">
 

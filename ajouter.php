@@ -3,6 +3,30 @@ session_start();
 
 $bdd = new PDO("mysql:host=localhost;dbname=bloggy;charset=utf8", 'root', 'root');
 
+if (empty($_SESSION['id']))
+{
+    header('location:index.php');
+}
+
+if (isset($_POST['submitArticle']))
+{
+    if (!empty($_POST['titre']) && !empty($_POST['image']) && !empty($_POST['contenu']) && !empty($_POST['categorie']))
+    {
+        $titre = htmlspecialchars($_POST['titre']);
+        $image = htmlspecialchars($_POST['image']);
+        $contenu = nl2br($_POST['contenu']);
+        $categorie = nl2br($_POST['categorie']);
+
+        $ins = $bdd->prepare('INSERT INTO articles(titre, contenu, date, image, id_membre, categorie) VALUES(?,?,?,?,?,?)');
+        $ins->execute(array($titre, $contenu, time(), $image, $_SESSION['id'], $categorie));
+
+        header('location:index.php');
+
+    }
+}
+
+
+
 if (isset($_POST['pseudoRegister']) && isset($_POST['emailRegister']) && isset($_POST['passwordRegister']))
 {
     $pseudo = htmlspecialchars($_POST['pseudoRegister']);
@@ -114,7 +138,7 @@ if (isset($_POST['login'])) {
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
           aria-haspopup="true" aria-expanded="false">Catégories</a>
-        <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
+          <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
           <a class="dropdown-item" href="index.php">Toutes les catégories</a>
           <?php
             $cat = $bdd->prepare('SELECT * FROM categorie WHERE id != ?');
@@ -279,70 +303,70 @@ if (isset($_POST['login'])) {
 
 
 
+<form action="" method="POST">
 
+        <div class="container">
 
+            <h1 class="mt-5">Bonjour <?= $_SESSION['pseudo'] ?>, rédigez votre article</h1>
 
+            <div class="col-md-12">
 
-
-
-
-
-
-
-    <?php
-    if (isset($_GET['categorie']))
-    {
-        $categorie = strval($_GET['categorie']);
-        $req = $bdd->prepare('SELECT * FROM articles WHERE categorie = ? ORDER BY id DESC');
-        $req->execute(array($categorie));
-    }
-    else
-    {
-        $req = $bdd->prepare('SELECT * FROM articles WHERE id != ? ORDER BY id DESC');
-        $req->execute(array(0));
-    }
-    ?>
-
-    <div class="container mt-5">
-        <section id="articles">
-            <div class="row">
-                <div class="col-md-12 text-center mb-3">
-                    <i><h5 style="background-color:#555555;color:white;width:200px;margin:auto;">Dernières actualités</h5></i>
-                </div>
-            </div>
-            <hr style="margin-top:-30px;">
-            <?php while ($a = $req->fetch()) { ?>
-            <div class="row mt-5">
-                <div class="col-md-4 mt-3 mb-4">
-
-                <!--Zoom effect-->
-                <a href="article.php?id=<?= $a['id'] ?>">
-                <div class="view overlay zoom">
-                <img src="<?= $a['image'] ?>" class="img-fluid " alt="zoom">
-                <div class="mask flex-center waves-effect waves-light">
-                    <p class="white-text"></p>
-                </div>
-                </div>
-                </a>
-
-            </div>
-
-            <div class="col-md-8">
-                    <p style="font-size:19px;" class="mt-2">
-                        <div class="date" style="font-size:13px;"><b><b><?= $a['categorie'] ?> / </b></b><?= 'Il y a ' . date('i', time() - $a['date']) . ' minutes ' . date('s', time() - $a['date']) . ' secondes';  ?></div>
-                        <h2 class="mb-3"><b><b><a id="linkArticle" href="article.php?id=<?= $a['id'] ?>"><?= $a['titre'] ?></a></b></b></h2>
+                <div class="row">
+                    <div class="col-md-9">
+                        <!-- Material input -->
+                        <div class="md-form">
+                        <input type="text" id="titre" name="titre" class="form-control" style="font-size:20px;">
+                        <label style="font-size:20px;" for="titre">Titre de votre article</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 pt-4">
+                        <select id="categorie" name="categorie" class="browser-default custom-select">
                         <?php
-                        $text = $a['contenu'];
-                        $text = substr($text, 0, 300);
-                        $text = $text . ' ... <br><a href="article.php?id=' . $a['id'] . '">Lire plus</a>';
-                        echo $text;
-                       ?>
-                    </p>
+                            $cat = $bdd->prepare('SELECT * FROM categorie WHERE id != ?');
+                            $cat->execute(array(0));
+                            while ($c = $cat->fetch()) {
+                        ?>
+                            <option value="<?= $c['titre'] ?>"><?= $c['titre'] ?></option>
+                        
+                        <?php
+                            }
+                        ?>
+                        </select>
+                    </div>
                 </div>
+
+
+
+
+
+                <!-- Material input -->
+                <div class="md-form">
+                <input style="font-size:18px;" type="text" id="image" name="image" class="form-control">
+                <label style="font-size:18px;" for="image">URL de votre image</label>
+                </div>
+
+                <!--Material textarea-->
+                <div class="md-form">
+                <textarea style="font-size:18px;" id="contenu" name="contenu" class="md-textarea form-control" rows="10"></textarea>
+                <label style="font-size:18px;" for="contenu">Contenu de votre article</label>
+                </div>
+
+                <input type="submit" id="submitArticle" name="submitArticle" class="btn btn-success" value="Créer l'article">
+
             </div>
-            <?php } ?>
-        </section>
-    </div>
+        </div>
+
+
+
+
+</form>
+
+
+<script>
+    document.getElementById('titre').addEventListener('keyup', function() {
+        document.getElementById('submitArticle').textContent = 'Créer l\'article ' + this.value;
+    });
+</script>
 
 
 
