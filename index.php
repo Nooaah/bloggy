@@ -66,7 +66,7 @@ if (isset($_POST['login'])) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Bloggy</title>
+    <title>BloggyPenguy - L'actualité complétement givrante !</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
     <!-- Bootstrap core CSS -->
@@ -75,7 +75,7 @@ if (isset($_POST['login'])) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.8/css/mdb.min.css" rel="stylesheet">
     <!-- Your custom styles (optional) -->
     <link href="css/style.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/AboutReact/sampleresource/master/old_logo.png">
+    <link rel="icon" type="image/png" href="https://data.whicdn.com/images/48855885/original.png">
     <style>
         #linkArticle
         {
@@ -99,7 +99,7 @@ if (isset($_POST['login'])) {
 <nav class="navbar navbar-expand-lg navbar-dark success-color">
 
   <!-- Navbar brand -->
-  <a class="navbar-brand" href="#">Bloggy</a>
+  <a class="navbar-brand" href="#"><img src="https://data.whicdn.com/images/48855885/original.png" class="mr-3" width="30px" alt="">BloggyPenguy</a>
 
   <!-- Collapse button -->
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
@@ -368,7 +368,7 @@ if (isset($_POST['login'])) {
 
 
 <!-- Footer -->
-<footer class="page-footer font-small success-color mt-5">
+<footer class="page-footer font-small success-color mt-5 pt-2">
 
   <!-- Copyright -->
   <div class="footer-copyright text-center py-3">© <?= date('Y') ?> Copyright

@@ -51,7 +51,7 @@ if (isset($_GET['delcat']))
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Bloggy</title>
+    <title><?= $_SESSION['pseudo'] ?> - BloggyPenguy</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
     <!-- Bootstrap core CSS -->
@@ -60,7 +60,7 @@ if (isset($_GET['delcat']))
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.8/css/mdb.min.css" rel="stylesheet">
     <!-- Your custom styles (optional) -->
     <link href="css/style.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/AboutReact/sampleresource/master/old_logo.png">
+    <link rel="icon" type="image/png" href="https://data.whicdn.com/images/48855885/original.png">
     <style>
         #linkArticle
         {
@@ -84,7 +84,7 @@ if (isset($_GET['delcat']))
 <nav class="navbar navbar-expand-lg navbar-dark success-color">
 
   <!-- Navbar brand -->
-  <a class="navbar-brand" href="#">Bloggy</a>
+  <a class="navbar-brand" href="#"><img src="https://data.whicdn.com/images/48855885/original.png" class="mr-3" width="30px" alt="">BloggyPenguy</a>
 
   <!-- Collapse button -->
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
@@ -279,7 +279,20 @@ $userinfo = $req->fetch();
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h1 class="mt-5">Bienvenue sur votre profil, <?= $_SESSION['pseudo'] ?></h1>
+            <?php
+            if ($userinfo['id'] == $_SESSION['id'])
+            {
+                ?>
+                    <h1 class="mt-5">Bienvenue sur votre profil <?= ucfirst($_SESSION['pseudo']) ?></h1>
+                <?php
+            }
+            else
+            {
+                ?>
+                    <h1 class="mt-5">Bienvenue sur le profil de <?= ucfirst($userinfo['pseudo']) ?></h1>
+                <?php
+            }
+            ?>
 
             <hr>
 
@@ -308,7 +321,7 @@ $userinfo = $req->fetch();
                     <tbody>
                     <?php
                     $article = $bdd->prepare('SELECT * FROM articles WHERE id_membre = ? ORDER BY id');
-                    $article->execute(array($_SESSION['id']));
+                    $article->execute(array($userinfo['id']));
                     $nb_articles = $article->rowcount();
                     while ($a = $article->fetch()) {
                     ?>
@@ -318,8 +331,18 @@ $userinfo = $req->fetch();
                                 <th><?= $a['categorie'] ?></th>
                                 <th><?= $a['views'] ?></th>
                                 <th>
+                                    <?php
+                                    if ($userinfo['id'] == $_SESSION['id']) {
+                                    ?>
                                     <a href="profil.php?id=<?= $_SESSION['id'] ?>&del=<?= $a['id'] ?>"><i style="color:red;" class="fas fa-trash-alt"></i></a>
                                     <a href="modifier.php?id=<?= $a['id'] ?>"><i style="color:green;" class="fas fa-pencil-alt ml-3"></i></a>
+                                    <?php
+                                    }
+                                    else
+                                    {
+                                        echo 'Modif. impossible';
+                                    }
+                                    ?>
                                 </th>
                             </tr>
                             <?php
@@ -365,7 +388,20 @@ $userinfo = $req->fetch();
                             ?>
                                     <tr>
                                         <th><?= $c['titre'] ?></th>
-                                        <th><a href="profil.php?delcat=<?= $c['id'] ?>"><i style="color:red;" class="ml-5 fas fa-trash-alt"></a></th>
+                                        <th>
+                                        <?php
+                                        if ($userinfo['id'] == $_SESSION['id']) {
+                                        ?>
+                                        <a href="profil.php?delcat=<?= $c['id'] ?>"><i style="color:red;" class="ml-5 fas fa-trash-alt">
+                                        <?php
+                                        }
+                                        else
+                                        {
+                                            echo 'Modif. impossible';
+                                        }
+                                        ?>
+                                        
+                                        </th>
                                     </tr>
                                     <?php
                             }
@@ -379,11 +415,14 @@ $userinfo = $req->fetch();
                         <form action="" method="POST">
                                 <div class="md-form">
                                 <input type="text" id="titreCategorie" name="titreCategorie" maxlength="100" class="form-control" style="font-size:20px;">
-                                <label style="font-size:20px;" for="titreCategorie">Ajouter une catégorie</label>
+                                <label style="font-size:20px;" for="titreCategorie">Ajouter une catégorie au site</label>
                                 </div>
                                 <input type="submit" class="btn btn-success" id="addCategorie" name="addCategorie" value="Ajouter cette catégorie">
                         </form>
                             </div>  
+
+
+                            
                     </div>
 
 
