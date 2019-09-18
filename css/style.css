@@ -6,3 +6,11 @@
 {
     text-decoration:underline;
 }
+.articleMostView, .articlenewArticle
+{
+    color:black;
+}
+.articleMostView:hover, .articlenewArticle:hover
+{
+    color:#7E7E7E;
+}

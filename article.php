@@ -331,14 +331,14 @@ aria-hidden="true">
         <section id="articles">
             <div class="row">
                 <div class="col-md-12 text-center mb-3">
-                    <i><h5 style="background-color:#555555;color:white;width:200px;margin:auto;">Votre article</h5></i>
+                    <i><h5 style="background-color:#555555;color:white;width:200px;margin:auto;"><b>Votre article</b></h5></i>
                 </div>
             </div>
             <hr style="margin-top:-30px;">
 
 
             <div class="row">
-                <div class="col-md-10 mt-3">
+                <div class="col-md-8 mt-3">
 
                     <span style="background-color:orange;color:white;padding:5px 10px;border-radius:5px;"><b><b><?= $a['categorie'] ?></b></b></span>
 
@@ -367,7 +367,67 @@ aria-hidden="true">
 
 
                 </div>
+                <div class="col-md-4" style="margin-top:80px;">
+                        <div class="row">
+                            <div class="col-md-12 text-center mb-5">
+                                <i><h5 style="font-size:20px;background-color:#555555;color:white;width:150px;margin:auto;margin-top:95px;"><b>Les plus vus</b></h5></i>
+                            </div>
+                            <hr style="margin-top:-10px;">
+                        <?php
+                            $mostView = $bdd->prepare('SELECT * FROM articles WHERE id != ? ORDER BY views DESC LIMIT 3');
+                            $mostView->execute(array(0));
+                            while ($mv = $mostView->fetch()) {
+                                ?>
+                                    <div class="row">
+                                        <div class="col-md-5 mb-3">
+                                            <a href="article.php?id=<?= $mv['id'] ?>"><img src="<?= $mv['image'] ?>" width="100%" alt=""></a>
+                                        </div>
+                                        <div class="col-md-7 mb-3">
+                                            <a class="articleMostView" href="article.php?id=<?= $mv['id'] ?>"><b><b><?= $mv['titre'] ?></b></b></a>
+                                            <br>
+                                            <?= $mv['views'] ?> vues
+                                        </div>
+                                    </div>
+                                <?php
+                            }
+                            ?>
+                            <div class="col-md-12 text-center mb-5">
+                                <i><h5 style="font-size:20px;background-color:#555555;color:white;width:170px;margin:auto;margin-top:50px;"><b>Les nouveautés</b></h5></i>
+                            </div>
+                        <?php
+                            $newArticle = $bdd->prepare('SELECT * FROM articles WHERE id != ? ORDER BY id DESC LIMIT 3');
+                            $newArticle->execute(array(0));
+                            while ($mv = $newArticle->fetch()) {
+                                ?>
+                                    <div class="row">
+                                        <div class="col-md-5 mb-3">
+                                            <a href="article.php?id=<?= $mv['id'] ?>"><img src="<?= $mv['image'] ?>" width="100%" alt=""></a>
+                                        </div>
+                                        <div class="col-md-7 mb-3">
+                                            <a class="articlenewArticle" href="article.php?id=<?= $mv['id'] ?>"><b><b><?= $mv['titre'] ?></b></b></a>
+                                            <br>
+                                            le <?= date('d/m/Y' ,time() - $mv['views']) ?>
+                                        </div>
+                                    </div>
+                                <?php
+                            }
+                            ?>
+
+                        </div>
+                </div>
             </div>
+
+            <?php
+                if (isset($_SESSION['id']))
+                {
+                    if ($a['id_membre'] == $_SESSION['id'])
+                    {
+                        ?>
+                            <a href="modifier.php?id=<?= $a['id'] ?>" class="btn btn-success">Modifier l'article</a>
+                        <?php
+                    }
+                }
+            ?>
             
 
 

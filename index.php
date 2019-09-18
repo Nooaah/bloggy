@@ -324,7 +324,7 @@ if (isset($_POST['login'])) {
         <section id="articles">
             <div class="row">
                 <div class="col-md-12 text-center mb-3">
-                    <i><h5 style="background-color:#555555;color:white;width:200px;margin:auto;">Dernières actualités</h5></i>
+                    <i><h5 style="background-color:#555555;color:white;width:220px;margin:auto;"><b>Dernières actualités</b></h5></i>
                 </div>
             </div>
             <hr style="margin-top:-30px;">

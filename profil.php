@@ -289,6 +289,9 @@ $userinfo = $req->fetch();
                     <h4 class="text-center mt-4"><?= $_SESSION['pseudo'] ?></h4 class="text-center">
                     <p class="mt-2 text-center">
                         <a href="mailto:<?= $_SESSION['mail'] ?>"><?= $_SESSION['mail'] ?></a>
+                        <hr>
+                        <div class="mt-1 text-center" id="nb_article"></div>
+                        
                     </p>
                 </div>
                 <div class="col-md-9">
@@ -306,6 +309,7 @@ $userinfo = $req->fetch();
                     <?php
                     $article = $bdd->prepare('SELECT * FROM articles WHERE id_membre = ? ORDER BY id');
                     $article->execute(array($_SESSION['id']));
+                    $nb_articles = $article->rowcount();
                     while ($a = $article->fetch()) {
                     ?>
                             <tr>
@@ -329,7 +333,16 @@ $userinfo = $req->fetch();
                     <hr>
 
 
-
+                    <script>
+                        if (<?= $nb_articles ?> <= 1)
+                        {
+                            document.getElementById('nb_article').innerHTML = '<b><?= $nb_articles ?></b> article créé';
+                        }
+                        else
+                        {
+                            document.getElementById('nb_article').innerHTML = '<b><?= $nb_articles ?></b> articles créés'; 
+                        }
+                    </script>
 
 
 

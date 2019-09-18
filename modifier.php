@@ -352,7 +352,7 @@ if (isset($_POST['login'])) {
                             $cat->execute(array(0));
                             while ($c = $cat->fetch()) {
                         ?>
-                            <option value="<?= $c['titre'] ?>"><?= $c['titre'] ?></option>
+                            <option value="<?= $c['titre'] ?>" <?php if ($c['titre'] == $a['categorie']) { echo 'selected'; } ?>><?= $c['titre'] ?></option>
                         
                         <?php
                             }
@@ -382,6 +382,7 @@ if (isset($_POST['login'])) {
                 <div class="md-form">
                 <textarea style="font-size:18px;" id="contenu" name="contenu" class="md-textarea form-control" rows="10"><?php
                     $text = str_replace("<br />", "", $a['contenu']);
+                    $text = str_replace("<br>", "", $a['contenu']);
                     echo $text;
                     ?></textarea>
                 <label style="font-size:18px;" for="contenu">Contenu de votre article</label>
