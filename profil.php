@@ -320,7 +320,7 @@ $userinfo = $req->fetch();
                     </thead>
                     <tbody>
                     <?php
-                    $article = $bdd->prepare('SELECT * FROM articles WHERE id_membre = ? ORDER BY id');
+                    $article = $bdd->prepare('SELECT * FROM articles WHERE id_membre = ? ORDER BY views DESC');
                     $article->execute(array($userinfo['id']));
                     $nb_articles = $article->rowcount();
                     while ($a = $article->fetch()) {
@@ -445,7 +445,7 @@ $userinfo = $req->fetch();
 
 
 <!-- Footer -->
-<footer class="page-footer font-small success-color mt-5">
+<footer class="page-footer font-small success-color mt-5 pt-2">
 
   <!-- Copyright -->
   <div class="footer-copyright text-center py-3">© <?= date('Y') ?> Copyright

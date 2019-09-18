@@ -36,10 +36,7 @@ if (isset($_POST['submitArticle']))
         $contenu = nl2br($_POST['contenu']);
         $categorie = htmlspecialchars($_POST['categorie']);
 
-        $ins = $bdd->prepare('INSERT INTO articles(titre, contenu, date, image, id_membre, categorie) VALUES(?,?,?,?,?,?)');
-        $ins->execute(array($titre, $contenu, time(), $image, $_SESSION['id'], $categorie));
-
-        $upp = $bdd->prepare('UPDATE articles SET titre = ? AND contenu = ? AND image = ? AND categorie = ? WHERE id = ?');
+        $upp = $bdd->prepare('UPDATE articles SET titre = ?, contenu = ?, image = ?, categorie = ? WHERE id = ?');
         $upp->execute(array($titre, $contenu, $image, $categorie, $getid));
 
         header('location:index.php');
@@ -416,7 +413,7 @@ if (isset($_POST['login'])) {
 
 
 <!-- Footer -->
-<footer class="page-footer font-small success-color mt-5">
+<footer class="page-footer font-small success-color mt-5 pt-2">
 
   <!-- Copyright -->
   <div class="footer-copyright text-center py-3">© <?= date('Y') ?> Copyright

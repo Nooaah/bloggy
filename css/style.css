@@ -2,6 +2,10 @@ html,body
 {
     scroll-behavior: smooth;
 }
+*
+{
+    transition:.2s;
+}
 #profilLink
 {
     color:white;

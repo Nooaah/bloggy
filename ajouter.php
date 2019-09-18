@@ -390,7 +390,7 @@ if (isset($_POST['login'])) {
 
 
 <!-- Footer -->
-<footer class="page-footer font-small success-color mt-5">
+<footer class="page-footer font-small success-color mt-5 pt-2">
 
   <!-- Copyright -->
   <div class="footer-copyright text-center py-3">© <?= date('Y') ?> Copyright

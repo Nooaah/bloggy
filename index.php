@@ -180,7 +180,9 @@ if (isset($_POST['login'])) {
 
     <form class="form-inline" action="" method="POST">
       <div class="md-form my-0">
-        <input class="form-control mr-sm-2" type="text" id="rechercher" name="rechercher" placeholder="Rechercher" aria-label="Rechercher">
+        <!--
+            <input class="form-control mr-sm-2" type="text" id="rechercher" name="rechercher" placeholder="Rechercher" aria-label="Rechercher">
+        -->
         <?php
         if (isset($_SESSION['id']))
         {
